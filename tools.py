@@ -21,14 +21,9 @@ def isHan(text):
 
 class Chapter():
     'Class used to store and process a chapter'
-    text = ''
-    words = dict()
-    num_words = 0
-    num_characters = 0
-    word_bracket = list()
-
     def __init__(self, text):
         self.text = text
+        self.word_bracket = list()
         self.words = self.__get_words(self.text)
         self.num_words = len(self.words)
         self.num_characters = len([x for x in text if isHan(x)])
@@ -39,17 +34,12 @@ class Chapter():
         raw_list = pseg.cut(text)
         for word, flag in raw_list:
             if isHan(word) and (not word in stop)  and (flag in ['p', 'u', 'a', 'd']):
-                print(word, flag)
                 self.word_bracket.append(word)
         return dict(Counter(self.word_bracket))
 
 
 class Novel():
     'Class used to store and process a novel'
-    text = ''
-    chapters = list()
-    num_chapters = 0
-
     def __init__(self, filename):
         f = open(filename, 'r', encoding='utf-8')
         self.text = f.read()
@@ -69,4 +59,6 @@ class Novel():
 if __name__ == '__main__':
     n = Novel('hongloumeng.txt')
     c = n.chapters[0]
+    print(len(c.word_bracket))
+    c = n.chapters[1]
     print(len(c.word_bracket))
