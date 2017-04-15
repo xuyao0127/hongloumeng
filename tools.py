@@ -17,11 +17,13 @@ class Chapter():
     text = ''
     words = dict()
     num_words = 0
+    num_characters = 0
 
     def __init__(self, text):
         self.text = text
         self.words = self.__get_words(self.text)
         self.num_words = len(self.words)
+        self.num_characters = len([x for x in text if isHan(x)])
 
     def __get_words(self, text):
         'split text into words and store them in a dictionary'
@@ -59,5 +61,4 @@ if __name__ == '__main__':
     print('Content of first chapter')
     print(c.text)
     print('Number of unique words in first chapter: ', c.num_words)
-    print('Words list')
-    print(c.words)
+    print('Number of characters', c.num_characters)
