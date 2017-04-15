@@ -36,7 +36,7 @@ class Chapter():
     def __get_words(self, text):
         'split text into words and store them in a dictionary'
         stop = stop_words()
-        word_bracket = list(filter(lambda x: not(x in stop), jieba.cut(text)))
+        word_bracket = list(filter(lambda x: not((x in stop) or '一' in x), jieba.cut(text)))
         self.word_bracket = list(filter(isHan, word_bracket))
         return dict(Counter(self.word_bracket))
 
