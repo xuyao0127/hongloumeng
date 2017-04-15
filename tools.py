@@ -39,6 +39,7 @@ class Chapter():
         raw_list = pseg.cut(text)
         for word, flag in raw_list:
             if isHan(word) and (not word in stop)  and (flag in ['p', 'u', 'a', 'd']):
+                print(word, flag)
                 self.word_bracket.append(word)
         return dict(Counter(self.word_bracket))
 
