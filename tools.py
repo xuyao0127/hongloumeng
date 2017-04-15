@@ -18,6 +18,7 @@ class Chapter():
     words = dict()
     num_words = 0
     num_characters = 0
+    word_bracket = list()
 
     def __init__(self, text):
         self.text = text
@@ -28,8 +29,8 @@ class Chapter():
     def __get_words(self, text):
         'split text into words and store them in a dictionary'
         word_bracket = jieba.cut(text)
-        filtered = list(filter(isHan, word_bracket))
-        return dict(Counter(filtered))
+        self.word_bracket = list(filter(isHan, word_bracket))
+        return dict(Counter(self.word_bracket))
 
 
 class Novel():
@@ -61,4 +62,4 @@ if __name__ == '__main__':
     print('Content of first chapter')
     print(c.text)
     print('Number of unique words in first chapter: ', c.num_words)
-    print('Number of characters', c.num_characters)
+    print('words braket', c.word_bracket)
