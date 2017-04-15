@@ -7,6 +7,13 @@ import jieba
 from collections import Counter
 
 
+def stop_words():
+    'Return list of Chinese stop words'
+    f = open('stop_words', 'r', encoding='utf-8')
+    text = f.read()
+    return text.split()
+
+
 def isHan(text):
     'If text is contains Chinese characters only'
     return all('\u4e00' <= char <= '\u9fff' for char in text)
@@ -28,7 +35,8 @@ class Chapter():
 
     def __get_words(self, text):
         'split text into words and store them in a dictionary'
-        word_bracket = jieba.cut(text)
+        stop = stop_words()
+        word_bracket = list(filter(lambda x: not(x in stop), jieba.cut(text)))
         self.word_bracket = list(filter(isHan, word_bracket))
         return dict(Counter(self.word_bracket))
 
@@ -57,9 +65,5 @@ class Novel():
 
 if __name__ == '__main__':
     n = Novel('hongloumeng.txt')
-    print('Number of chapters: ', n.num_chapters)
     c = n.chapters[0]
-    print('Content of first chapter')
-    print(c.text)
-    print('Number of unique words in first chapter: ', c.num_words)
-    print('words braket', c.word_bracket)
+    print(len(c.word_bracket))
