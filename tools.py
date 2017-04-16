@@ -4,17 +4,15 @@ Helper functions
 '''
 import re
 import jieba.posseg as pseg
-from collections import Counter
 
 
-def stop_words():
-    'Return list of Chinese stop words'
-    f = open('stop_words', 'r', encoding='utf-8')
-    text = f.read()
-    return text.split()
+STOP_WORDS = open('stop_words', 'r', encoding='utf-8').read().split()
+FLAG_LIST = ['p', 'u', 'a', 'd']
+FIRST_HALF = 80
+SECOND_HALF = 120
 
 
-def isHan(text):
+def is_han(text):
     'If text is contains Chinese characters only'
     return all('\u4e00' <= char <= '\u9fff' for char in text)
 
@@ -23,28 +21,25 @@ class Chapter():
     'Class used to store and process a chapter'
     def __init__(self, text):
         self.text = text
-        self.word_bracket = list()
         self.words = self.__get_words(self.text)
         self.num_words = len(self.words)
-        self.num_characters = len([x for x in text if isHan(x)])
+        self.num_characters = len([x for x in text if is_han(x)])
 
     def __get_words(self, text):
         'split text into words and store them in a dictionary'
-        stop = stop_words()
         raw_list = pseg.cut(text)
+        filtered = list()
         for word, flag in raw_list:
-            if isHan(word) and (not word in stop)  and (flag in ['p', 'u', 'a', 'd']):
-                self.word_bracket.append(word)
-        return dict(Counter(self.word_bracket))
+            if is_han(word) and (not word in STOP_WORDS)  and (flag in FLAG_LIST):
+                filtered.append(word)
+        return filtered
 
 
 class Novel():
     'Class used to store and process a novel'
     def __init__(self, filename):
-        f = open(filename, 'r', encoding='utf-8')
-        self.text = f.read()
+        self.text = open(filename, 'r', encoding='utf-8').read()
         self.chapters = self.__chapter_list(self.text)
-        self.num_chapters = len(self.chapters)
 
     def __chapter_list(self, text):
         '''
@@ -53,12 +48,10 @@ class Novel():
         '''
         sep = re.compile(r'第.*?回\s')
         raw_chapters = sep.split(text)[1:]
-        return list(map(Chapter, raw_chapters))
-
-
-if __name__ == '__main__':
-    n = Novel('hongloumeng.txt')
-    c = n.chapters[0]
-    print(len(c.word_bracket))
-    c = n.chapters[1]
-    print(len(c.word_bracket))
+        result = list()
+        length = len(raw_chapters)
+        for chapter_index in range(length):
+            if chapter_index % 10 == 0:
+                print('Processing chapter', chapter_index + 1, '...', chapter_index + 10)
+            result.append(Chapter(raw_chapters[chapter_index]))
+        return result
