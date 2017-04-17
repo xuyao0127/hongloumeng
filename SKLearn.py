@@ -67,8 +67,8 @@ def hierarchical2(chapter_list):
     weight = tf_idf(chapter_list)
     print('Start hierarchical 2 clustering:')
     result = hierarchy.linkage(weight, 'single')
-    plt.figure()
     hierarchy.dendrogram(result)
+    plt.show()
 
 
 def main():
