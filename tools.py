@@ -12,11 +12,6 @@ FIRST_HALF = 80
 SECOND_HALF = 120
 
 
-def is_han(text):
-    'If text is contains Chinese characters only'
-    return all('\u4e00' <= char <= '\u9fff' for char in text)
-
-
 class Chapter():
     'Class used to store and process a chapter'
     def __init__(self, text):
@@ -30,7 +25,7 @@ class Chapter():
         raw_list = pseg.cut(text)
         filtered = list()
         for word, flag in raw_list:
-            if is_han(word) and (not word in STOP_WORDS)  and (flag in FLAG_LIST):
+            if (flag in FLAG_LIST) and (word not in STOP_WORDS):
                 filtered.append(word)
         return filtered
 
@@ -52,6 +47,21 @@ class Novel():
         length = len(raw_chapters)
         for chapter_index in range(length):
             if chapter_index % 10 == 0:
-                print('Processing chapter', chapter_index + 1, '...', chapter_index + 10)
+                print('Processing chapter', chapter_index + 1, '...',
+                      chapter_index + 10)
             result.append(Chapter(raw_chapters[chapter_index]))
         return result
+
+
+def load(filename):
+    'load preprocessed words as list of strings'
+    text = open(filename, 'r', encoding='utf-8').read()
+    return text.split('\n')
+
+
+def save(filename, str_list):
+    'save string list into a given filename'
+    f = open(filename, 'w', encoding='utf-8')
+    for s in str_list:
+        f.write(s + '\n')
+    f.close()
