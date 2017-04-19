@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster import hierarchy
 from sklearn.decomposition import IncrementalPCA
+import matplotlib
 import matplotlib.pyplot as plt
 import tools
 
@@ -79,11 +80,11 @@ def hierarchical(chapter_list):
     plt.show()
 
 
-def hierarchical2(chapter_list):
+def dendrogram(chapter_list):
     'Run hierarchical algorithm on given chapters with graph'
     weight = tf_idf(chapter_list)
     result = hierarchy.linkage(weight, 'ward')
-    hierarchy.set_link_color_palette(['r', 'b'])
+    hierarchy.set_link_color_palette(['c', 'orangered'])
     hierarchy.dendrogram(result, color_threshold=2, above_threshold_color='c')
     plt.show()
 
@@ -91,19 +92,37 @@ def hierarchical2(chapter_list):
 def main():
     'Program entry'
     print('Preparing data:')
-    if path.exists('filtered.txt'):
-        chapters = tools.load('filtered.txt')
-    else:
-        novel = tools.Novel('hongloumeng.txt')
-        chapters = [' '.join(chapter.words) for chapter in novel.chapters]
-        tools.save('filtered.txt', chapters)
-    # Data processing
+    novel = tools.Novel('hongloumeng.txt')
+    chapters = [' '.join(chapter.words) for chapter in novel.chapters]
+    # EDA
+    # Number of function words
+    num_words_list = [len(Counter(x.split(' '))) for x in chapters]
+    plt.plot(range(1, 121), num_words_list, marker='x', color='c',
+             label='Duplicate')
+    num_words_list = [len(x.split(' ')) for x in chapters]
+    plt.plot(range(1, 121), num_words_list, marker='x', color='orangered',
+             label='Unique')
+    plt.grid(True)
+    plt.xlabel('Chapter Index')
+    plt.ylabel('Words')
+    plt.title('Number of Function Words in Each Chapter')
+    plt.legend()
+    plt.show()
+    # number of characters
+    num_chars_list = [x.num_characters for x in novel.chapters]
+    plt.plot(range(1, 121), num_chars_list, marker='x', color='c')
+    plt.xlabel('Chapter Index')
+    plt.ylabel('Characters')
+    plt.title('Number of Characters in Each Chapter')
+    plt.grid(True)
+    plt.show()
+    # Clusters
     print('Start Kmeans:')
     kmeans(chapters)
     print('Start hierarchical clustering:')
     hierarchical(chapters)
     print('Generating dendrogram:')
-    hierarchical2(chapters)
+    dendrogram(chapters)
 
 
 if __name__ == '__main__':

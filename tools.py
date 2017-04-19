@@ -12,6 +12,11 @@ FIRST_HALF = 80
 SECOND_HALF = 120
 
 
+def is_han(char):
+    'If the given character is a Chinese character'
+    return '\u4e00' <= char <= '\u9fff'
+
+
 class Chapter():
     'Class used to store and process a chapter'
     def __init__(self, text):
@@ -51,17 +56,3 @@ class Novel():
                       chapter_index + 10)
             result.append(Chapter(raw_chapters[chapter_index]))
         return result
-
-
-def load(filename):
-    'load preprocessed words as list of strings'
-    text = open(filename, 'r', encoding='utf-8').read()
-    return text.split('\n')
-
-
-def save(filename, str_list):
-    'save string list into a given filename'
-    f = open(filename, 'w', encoding='utf-8')
-    for s in str_list:
-        f.write(s + '\n')
-    f.close()
